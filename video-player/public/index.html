@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="stylesheet" href="./css/base.css">
+    <script src="./js/flv.min.js"> </script>
+	  <script>
+	    jx_cms_global_config_ = {};
+	    jx_cms_global_config_.cmsUrl="http://192.168.7.119:8080";
+	    jx_cms_global_config_.cmsWsUrl="ws://192.168.7.119:8080";
+	    jx_cms_global_config_.defaultWindowNum=1;
+	    jx_cms_global_config_.isFloatMode=false;
+	    jx_cms_global_config_.isSimpleMode=false;
+	    jx_cms_global_config_.userName="wangyl12345";
+	    jx_cms_global_config_.passWord="12345"; 
+	  </script>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
