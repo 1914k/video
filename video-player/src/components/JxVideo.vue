@@ -15,8 +15,10 @@
       <template v-slot:errorMessage></template>
       <template v-slot:toolBar></template>
     </jxCmsPluginVideoMain>
-    <input type="button" @click="playList" value="播放列表" />
-    <input type="button" @click="playOne" value="播放1个" />
+    <div class="button-list">
+      <input type="button" @click="playList" value="播放列表" />
+      <input type="button" @click="playOne" value="播放1个" />
+    </div>
   </div>
 </template>
 
@@ -37,16 +39,16 @@ export default {
   mounted() {},
   methods: {
     playOne() {
-      // this.videoData = { videoNo: 1010010010102002, name: "#1固定机(网络)" };
+      this.videoData = { videoNo: 1010010010102002, name: "#1固定机(网络)" };
     },
     playList() {
       this.videoData = [
-        // { videoNo: 1010010030102002, name: "#1固定机(网络)" },
-        // { videoNo: 1010010010100001, name: "#1高速球机(网络)" },
-        // { videoNo: 1010010010102007, name: "#6固定机(网络)" },
-        // { videoNo: 1010010010102008, name: "#7固定机(网络)" },
-        // { videoNo: 1010010010301005, name: "声光告警#1" },
-        // { videoNo: 1010010010200001, name: "温度#1" }
+        { videoNo: 1010010030102002, name: "#1固定机(网络)" },
+        { videoNo: 1010010010100001, name: "#1高速球机(网络)" },
+        { videoNo: 1010010010102007, name: "#6固定机(网络)" },
+        { videoNo: 1010010010102008, name: "#7固定机(网络)" },
+        { videoNo: 1010010010301005, name: "声光告警#1" },
+        { videoNo: 1010010010200001, name: "温度#1" }
       ];
     }
   }
@@ -75,3 +77,26 @@ export default {
 //   }
 // }
 </script>
+
+<style scoped>
+.button-list {
+  padding-top: 20px;
+}
+.button-list input {
+  color: #fff;
+  border: 1px solid #0aa7d3;
+  border-radius: 4px;
+  border-width: 1px;
+  padding: 5px;
+  background: linear-gradient(#19f4ed, #088ef0);
+}
+.button-list input:focus {
+  outline: none;
+  border: 1px solid rgba(10, 167, 211, 0);
+  padding: 3px;
+  background: linear-gradient(#44baff, #5685a7);
+}
+.button-list input:first-child {
+  margin-right: 10px;
+}
+</style>

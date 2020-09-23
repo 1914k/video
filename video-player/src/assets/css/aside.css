@@ -1,0 +1,60 @@
+.menu-aside {
+  padding-top: 10px;
+  background-image: url(../images/item.png);
+  background-size: 100% 100%;
+}
+.el-header {
+  vertical-align: middle;
+  padding: 10px 20px;
+  z-index: 999;
+}
+.el-header .el-input--prefix .el-input__inner {
+  background: none;
+  border-color: #444444;
+  border-radius: 20px;
+  color: #def8f8;
+}
+.el-input__prefix i {
+  color: #2dd5ff
+}
+
+.el-autocomplete-suggestion {
+  background:  #06305c;
+  color: #def8f8;
+  border-color: #2dd5ff;
+  padding-bottom: 10px;
+}
+.el-autocomplete-suggestion li {
+  color: #def8f8;
+}
+.el-autocomplete-suggestion li.highlighted, .el-autocomplete-suggestion li:hover {
+  background:  #011d3b;
+}
+
+.el-scrollbar .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+.device-tree {
+  height: 550px;
+}
+.el-tree {
+  background-color: rgba(1, 48, 95, 0.3);
+  color: #def8f8;
+  width: 100%;
+}
+.el-tree-node__content:hover {
+  background-color: #093465;
+}
+/* .el-tree-node:focus {
+  background-color: #093465;
+} */
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  background-color: #093465;
+}
+.el-tree > .el-tree-node {
+  min-width: 100%;
+  display: inline-block;
+}
+.el-tree-node:focus>.el-tree-node__content {
+  background-color: transparent;
+}

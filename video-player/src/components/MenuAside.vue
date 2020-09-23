@@ -1,12 +1,26 @@
 <template>
-  <el-container>
+  <el-container class="menu-aside">
     <el-header>
-      <el-input
+      <!-- <el-input
+        class="search"
         placeholder="请输入内容搜索"
+        clearable
+        :fetch-suggestions="querySearch"
+        :trigger-on-focus="false"
         prefix-icon="el-icon-search"
-        v-model="search_data"
+        v-model="search_info"
       >
-      </el-input>
+      </el-input> -->
+      <el-autocomplete
+        class="search"
+        v-model="search_info"
+        clearable
+        prefix-icon="el-icon-search"
+        :fetch-suggestions="querySearch"
+        placeholder="请输入内容"
+        @select="handleSelect"
+        :trigger-on-focus="false"
+      ></el-autocomplete>
     </el-header>
     <el-main>
       <div class="device-tree">
@@ -28,17 +42,19 @@
 </template>
 
 <script>
+import "@/assets/css/aside.css";
 export default {
   name: "menu-aside",
   data() {
     return {
       expandedKey: [],
-      search_data: "",
+      search_info: "",
       defaultProps: {
         children: "children",
-        label: "text",
-        isLeaf: "leaf"
+        label: "text"
       },
+      searchInfoArray: [],
+      searchMap: undefined,
       queryTree: [
         {
           deviceType: "ipc",
@@ -8924,6 +8940,14 @@ export default {
       ]
     };
   },
+  mounted() {
+    this.searchMap = new Map();
+    this.getSearchList(
+      this.searchMap,
+      this.searchInfoArray,
+      this.device_unit_tree
+    );
+  },
   methods: {
     handleClick(node) {
       if (!("level" in node)) {
@@ -8934,6 +8958,7 @@ export default {
         this.append(node);
       }
     },
+    // 添加站点的设备节点
     append(data) {
       const newChild = this.queryTree;
       if (!data.children) {
@@ -8942,25 +8967,59 @@ export default {
       data.children.push(...newChild);
       this.expandedKey = [];
       this.expandedKey.push(data.id);
+    },
+    // 选中搜索弹出框
+    handleSelect(item) {
+      console.log(item);
+      this.handleSearch(item.id);
+    },
+    // 判断是否添加设备树
+    isAddQuerryTree(node) {
+      if (Object.prototype.toString.call(node) === "[object Object]") {
+        if (node.level === 4 && node.children === null) {
+          console.log("站点", node);
+          this.append(node);
+        }
+      } else {
+        // console.log(getNode());
+      }
+    },
+    // 搜索站点
+    handleSearch(id) {
+      this.expandedKey.length = 0;
+      this.expandedKey.push(id);
+    },
+    // 搜索输入提示
+    querySearch(queryString, cb) {
+      var restaurants = this.searchInfoArray;
+      var results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return restaurant => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) !==
+          -1
+        );
+      };
+    },
+    // 从组织树中提取站点 text 和 id
+    getSearchList(target_map, target_arr, source) {
+      for (let item of source) {
+        target_map.set(item.text, item.id);
+        target_arr.push({ value: item.text, id: item.id, level: item.level });
+        if (Array.isArray(item.children)) {
+          this.getSearchList(
+            this.searchMap,
+            this.searchInfoArray,
+            item.children
+          );
+        }
+      }
     }
   }
 };
 </script>
-
-<style scoped>
-.el-header {
-  vertical-align: middle;
-  padding: 10px 20px;
-}
-.device-tree {
-  width: 218px;
-  height: 550px;
-}
-.el-scrollbar .el-scrollbar__wrap {
-  overflow-x: hidden;
-}
-.el-tree > .el-tree-node {
-  min-width: 100%;
-  display: inline-block;
-}
-</style>

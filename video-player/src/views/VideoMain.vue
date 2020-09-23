@@ -2,7 +2,7 @@
   <el-container>
     <el-header height="40px">视屏监控平台</el-header>
     <el-container class="content">
-      <el-aside width="260px">
+      <el-aside width="290px">
         <menu-aside />
       </el-aside>
       <el-main>
@@ -33,13 +33,8 @@ export default {
   text-align: center;
   vertical-align: middle;
   line-height: 40px;
-  border: 1px solid #000;
 }
 .el-aside {
-  border: 1px solid #000;
-}
-
-.el-main {
-  border: 1px solid #000;
+  padding: 20px 0 20px 20px;
 }
 </style>
