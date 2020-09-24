@@ -26,10 +26,19 @@ export default {
     JxVideo,
     MenuAside
   },
+  created() {
+    this.init();
+  },
   methods: {
     addVideoList(list) {
       this.videoList = list;
-      console.log("视屏播放列表", this.videoList);
+    },
+    init() {
+      this.$axios.get("/video/CmsDeviceUnitTreeService/getDeviceUnitTree").then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      })
     }
   }
 };

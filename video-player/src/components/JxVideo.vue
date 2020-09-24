@@ -42,13 +42,15 @@ export default {
     };
   },
   created() {},
-  mounted() {},
+  mounted() {
+
+  },
   methods: {
     playOne() {
-      this.videoData = this.videoList[0];
+      if(this.videoList.length > 0) this.videoData = this.videoList[0];
     },
     playList() {
-      this.videoData = this.videoList;
+      if(this.videoList.length > 0) this.videoData = this.videoList;
       // this.videoData = [
       //   { videoNo: 1010010030102002, name: "#1固定机(网络)" },
       //   { videoNo: 1010010010100001, name: "#1高速球机(网络)" },
@@ -99,8 +101,10 @@ export default {
 }
 .button-list input:focus {
   outline: none;
+}
+.button-list input:active {
+  outline: none;
   border: 1px solid rgba(10, 167, 211, 0);
-  padding: 3px;
   background: linear-gradient(#44baff, #5685a7);
 }
 .button-list input:first-child {

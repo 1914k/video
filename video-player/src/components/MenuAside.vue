@@ -8934,13 +8934,8 @@ export default {
       ]
     };
   },
-  mounted() {
-    this.searchMap = new Map();
-    this.getSearchList(
-      this.searchMap,
-      this.searchInfoArray,
-      this.device_unit_tree
-    );
+  created() {
+    this.init()
   },
   watch: {
     searchInfo(val) {
@@ -8948,6 +8943,17 @@ export default {
     }
   },
   methods: {
+    // 初始化
+    init() {
+      this.getSearchList(
+        this.searchInfoArray,
+        this.device_unit_tree
+      );
+      const defaultNode = this.defaultExpanded()
+      this.expandedKey = [defaultNode.id]
+      this.handleClick(defaultNode)
+    },
+    // 站点点击事件
     handleClick(node) {
       if (!("level" in node)) {
         console.log("设备", node);
@@ -8956,14 +8962,13 @@ export default {
         console.log("站点", node);
       }
       if (node.level === 4 && node.children === null) {
-        console.log("站点", node);
-        this.isAddQuerryTree(node);
+        this.isAddQuerryTreeTo(node);
         this.getVideoList();
         this.$emit("add-video-list", this.videoList)
       }
     },
     // 添加站点的设备节点
-    append(data) {
+    appendTo(data) {
       const newChild = this.queryTree;
       if (!data.children) {
         this.$set(data, "children", []);
@@ -8977,10 +8982,9 @@ export default {
       this.handleSearch(item.value);
     },
     // 判断是否添加设备树
-    isAddQuerryTree(node) {
+    isAddQuerryTreeTo(node) {
       if (node.level === 4 && node.children === null) {
-        console.log("站点", node);
-        this.append(node);
+        this.appendTo(node);
       }
     },
     // 搜索站点
@@ -8990,8 +8994,6 @@ export default {
       }else {
         this.$refs.tree.filter(this.searchInfo);
       }
-      // this.expandedKey.length = 0;
-      // this.expandedKey.push(id);
     },
     // 搜索输入提示
     querySearch(queryString, cb) {
@@ -9011,13 +9013,11 @@ export default {
       };
     },
     // 从组织树中提取站点 text 和 id
-    getSearchList(target_map, target_arr, source) {
+    getSearchList(target_arr, source) {
       for (let item of source) {
-        target_map.set(item.text, item.id);
         target_arr.push({ value: item.text, id: item.id, level: item.level });
         if (Array.isArray(item.children)) {
           this.getSearchList(
-            this.searchMap,
             this.searchInfoArray,
             item.children
           );
@@ -9056,6 +9056,10 @@ export default {
         let obj = {videoNo: this.queryTree[index].no, name: this.queryTree[index].name}
         this.videoList.push(obj)
       }
+    },
+    // 设置默认打开的站点
+    defaultExpanded() {
+      return this.device_unit_tree[0].children[0].children[0].children[0]
     }
   }
 };
