@@ -1,24 +1,15 @@
 <template>
   <el-container class="menu-aside">
     <el-header>
-      <!-- <el-input
-        class="search"
-        placeholder="请输入内容搜索"
-        clearable
-        :fetch-suggestions="querySearch"
-        :trigger-on-focus="false"
-        prefix-icon="el-icon-search"
-        v-model="search_info"
-      >
-      </el-input> -->
       <el-autocomplete
         class="search"
-        v-model="search_info"
+        v-model="searchInfo"
         clearable
         prefix-icon="el-icon-search"
         :fetch-suggestions="querySearch"
         placeholder="请输入内容"
         @select="handleSelect"
+        @keyup.enter.native="handleSearch"
         :trigger-on-focus="false"
       ></el-autocomplete>
     </el-header>
@@ -27,6 +18,8 @@
         <el-scrollbar style="height:100%">
           <el-tree
             ref="tree"
+            class="filter-tree"
+            :filter-node-method="filterNode"
             :data="device_unit_tree"
             node-key="id"
             highlight-current
@@ -48,11 +41,12 @@ export default {
   data() {
     return {
       expandedKey: [],
-      search_info: "",
+      searchInfo: "",
       defaultProps: {
         children: "children",
         label: "text"
       },
+      videoList: [],
       searchInfoArray: [],
       searchMap: undefined,
       queryTree: [
@@ -8948,14 +8942,24 @@ export default {
       this.device_unit_tree
     );
   },
+  watch: {
+    searchInfo(val) {
+      if(val === "") this.$refs.tree.filter("");
+    }
+  },
   methods: {
     handleClick(node) {
       if (!("level" in node)) {
         console.log("设备", node);
       }
+      if (node.level === 4) {
+        console.log("站点", node);
+      }
       if (node.level === 4 && node.children === null) {
         console.log("站点", node);
-        this.append(node);
+        this.isAddQuerryTree(node);
+        this.getVideoList();
+        this.$emit("add-video-list", this.videoList)
       }
     },
     // 添加站点的设备节点
@@ -8970,24 +8974,24 @@ export default {
     },
     // 选中搜索弹出框
     handleSelect(item) {
-      console.log(item);
-      this.handleSearch(item.id);
+      this.handleSearch(item.value);
     },
     // 判断是否添加设备树
     isAddQuerryTree(node) {
-      if (Object.prototype.toString.call(node) === "[object Object]") {
-        if (node.level === 4 && node.children === null) {
-          console.log("站点", node);
-          this.append(node);
-        }
-      } else {
-        // console.log(getNode());
+      if (node.level === 4 && node.children === null) {
+        console.log("站点", node);
+        this.append(node);
       }
     },
     // 搜索站点
-    handleSearch(id) {
-      this.expandedKey.length = 0;
-      this.expandedKey.push(id);
+    handleSearch(value) {
+      if(typeof value === "string") {
+        this.$refs.tree.filter(value);
+      }else {
+        this.$refs.tree.filter(this.searchInfo);
+      }
+      // this.expandedKey.length = 0;
+      // this.expandedKey.push(id);
     },
     // 搜索输入提示
     querySearch(queryString, cb) {
@@ -9018,6 +9022,39 @@ export default {
             item.children
           );
         }
+      }
+    },
+    // 搜索过滤
+    filterNode(value, data, node) {
+      if (!value) return true;
+      let ifOne = data.text.indexOf(value) !== -1
+      let ifTwo = node.parent && node.parent.data && node.parent.data.text && (node.parent.data.text.indexOf(value) !== -1)
+      let ifThree = node.parent && node.parent.parent && node.parent.parent.data && node.parent.parent.data.text && (node.parent.parent.data.text.indexOf(value) !== -1)
+      let ifFour = node.parent && node.parent.parent && node.parent.parent.parent && node.parent.parent.parent.data && node.parent.parent.parent.data.text && (node.parent.parent.parent.data.text.indexOf(value) !== -1)
+      let resultOne = false
+      let resultTwo = false
+      let resultThree = false
+      let resultFore = false
+      let resultFive = false
+
+      if (node.level === 1) {
+        resultOne = ifOne
+      } else if (node.level === 2) {
+        resultTwo = ifOne || ifTwo
+      } else if (node.level === 3) {
+        resultThree = ifOne || ifTwo || ifThree
+      } else if (node.level === 4) {
+        resultFore = ifOne || ifTwo || ifThree || ifFour
+      } else if (node.level === 5) {
+        resultFive = ifOne || ifTwo || ifThree || ifFour
+      }
+      return resultOne || resultTwo || resultThree || resultFore || resultFive
+    },
+    // 得到站点的视屏 no 和 name
+    getVideoList() {
+      for(let index in this.queryTree) {
+        let obj = {videoNo: this.queryTree[index].no, name: this.queryTree[index].name}
+        this.videoList.push(obj)
       }
     }
   }

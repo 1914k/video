@@ -27,6 +27,12 @@ import jxCmsPluginVideoMain from "@layen-king/jx-cms-video-main-plugin";
 export default {
   name: "jxVideo",
   components: { jxCmsPluginVideoMain },
+  props: {
+    videoList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       maxWindowNum: 16,
@@ -39,17 +45,18 @@ export default {
   mounted() {},
   methods: {
     playOne() {
-      this.videoData = { videoNo: 1010010010102002, name: "#1固定机(网络)" };
+      this.videoData = this.videoList[0];
     },
     playList() {
-      this.videoData = [
-        { videoNo: 1010010030102002, name: "#1固定机(网络)" },
-        { videoNo: 1010010010100001, name: "#1高速球机(网络)" },
-        { videoNo: 1010010010102007, name: "#6固定机(网络)" },
-        { videoNo: 1010010010102008, name: "#7固定机(网络)" },
-        { videoNo: 1010010010301005, name: "声光告警#1" },
-        { videoNo: 1010010010200001, name: "温度#1" }
-      ];
+      this.videoData = this.videoList;
+      // this.videoData = [
+      //   { videoNo: 1010010030102002, name: "#1固定机(网络)" },
+      //   { videoNo: 1010010010100001, name: "#1高速球机(网络)" },
+      //   { videoNo: 1010010010102007, name: "#6固定机(网络)" },
+      //   { videoNo: 1010010010102008, name: "#7固定机(网络)" },
+      //   { videoNo: 1010010010301005, name: "声光告警#1" },
+      //   { videoNo: 1010010010200001, name: "温度#1" }
+      // ];
     }
   }
 };

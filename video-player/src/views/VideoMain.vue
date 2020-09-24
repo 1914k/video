@@ -3,10 +3,10 @@
     <el-header height="40px">视屏监控平台</el-header>
     <el-container class="content">
       <el-aside width="290px">
-        <menu-aside />
+        <menu-aside @add-video-list="addVideoList" />
       </el-aside>
       <el-main>
-        <jx-video />
+        <jx-video :video-list="videoList" />
       </el-main>
     </el-container>
   </el-container>
@@ -17,14 +17,20 @@ import JxVideo from "../components/JxVideo";
 import MenuAside from "../components/MenuAside";
 export default {
   name: "video-main",
-  date() {
+  data() {
     return {
-      data: []
+      videoList: undefined
     };
   },
   components: {
     JxVideo,
     MenuAside
+  },
+  methods: {
+    addVideoList(list) {
+      this.videoList = list;
+      console.log("视屏播放列表", this.videoList);
+    }
   }
 };
 </script>
