@@ -11,3 +11,6 @@ html,body{
   width: 100%;
   color:#def8f8;
 }
+#app {
+  height: 100%;
+}

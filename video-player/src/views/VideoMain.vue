@@ -1,9 +1,12 @@
 <template>
   <el-container>
-    <el-header height="40px">视屏监控平台</el-header>
     <el-container class="content">
-      <el-aside width="290px">
-        <menu-aside @add-video-list="addVideoList" />
+      <el-aside width="320px">
+        <menu-aside
+          :key="timer"
+          :device-tree="deviceTree"
+          @add-video-list="addVideoList"
+        />
       </el-aside>
       <el-main>
         <jx-video :video-list="videoList" />
@@ -19,7 +22,10 @@ export default {
   name: "video-main",
   data() {
     return {
-      videoList: undefined
+      videoList: undefined,
+      deviceTree: [],
+      loading: undefined,
+      timer: ""
     };
   },
   components: {
@@ -34,11 +40,42 @@ export default {
       this.videoList = list;
     },
     init() {
-      this.$axios.get("/video/CmsDeviceUnitTreeService/getDeviceUnitTree").then((res) => {
-        console.log(res);
-      }).catch((err) => {
-        console.log(err);
-      })
+      this.fullscreenLoading();
+      const BaseUrl = this.getBaseUrl();
+      this.$axios
+        .get(
+          BaseUrl + "/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
+          {
+            params: {
+              unitId: 1
+            }
+          },
+          {
+            Headers: { Authorization: "bearer " + localStorage.JX_ACCESS_TOKEN }
+          }
+        )
+        .then(res => {
+          console.log("成功", this.deviceTree);
+          this.deviceTree = res.data;
+          this.timer = new Date().getTime();
+          this.loading.close();
+        })
+        .catch(err => {
+          console.log("失败", err);
+          this.timer = new Date().getTime();
+          this.loading.close();
+        });
+    },
+    getBaseUrl() {
+      return jx_cms_global_config_.cmsUrl;
+    },
+    fullscreenLoading() {
+      this.loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)"
+      });
     }
   }
 };

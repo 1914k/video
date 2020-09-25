@@ -42,49 +42,17 @@ export default {
     };
   },
   created() {},
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     playOne() {
-      if(this.videoList.length > 0) this.videoData = this.videoList[0];
+      console.log("播放", this.videoList[0]);
+      if (this.videoList.length > 0) this.videoData = this.videoList[0];
     },
     playList() {
-      if(this.videoList.length > 0) this.videoData = this.videoList;
-      // this.videoData = [
-      //   { videoNo: 1010010030102002, name: "#1固定机(网络)" },
-      //   { videoNo: 1010010010100001, name: "#1高速球机(网络)" },
-      //   { videoNo: 1010010010102007, name: "#6固定机(网络)" },
-      //   { videoNo: 1010010010102008, name: "#7固定机(网络)" },
-      //   { videoNo: 1010010010301005, name: "声光告警#1" },
-      //   { videoNo: 1010010010200001, name: "温度#1" }
-      // ];
+      if (this.videoList.length > 0) this.videoData = this.videoList;
     }
   }
 };
-// {
-//   "param": {
-//     "szDevId": "1010010010102002",
-//     "iVideoFlag": 1,
-//     "httpFlvUrl_internal": "http://192.168.7.232:8000/live/1010010010102002_1.flv",
-//     "httpFlvUrl": "http://192.168.7.232:8000/live/1010010010102002_1.flv",
-//     "szMessageString": "",
-//     "rtmpUrl_internal": "rtmp://192.168.7.232:1935/live/1010010010102002_1",
-//     "rtmpUrl": "rtmp://192.168.7.232:1935/live/1010010010102002_1",
-//     "websocketUrl": "ws://192.168.7.232:8000/live/1010010010102002_1.flv",
-//     "hlsUrl_internal": "http://192.168.7.232:8000/live/1010010010102002_1/index.m3u8",
-//     "websocketUrl_internal": "ws://192.168.7.232:8000/live/1010010010102002_1.flv",
-//     "iMessageCode": 0,
-//     "hlsUrl": "http://192.168.7.232:8000/live/1010010010102002_1/index.m3u8"
-//   },
-//   "command": {
-//     "iSeqNum": 25,
-//     "iProtocol": 1,
-//     "szClientId": "wangyl12345",
-//     "iCommand": 2106,
-//     "iAttrVal": 54
-//   }
-// }
 </script>
 
 <style scoped>
