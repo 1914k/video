@@ -74,7 +74,7 @@ export default {
       this.device_unit_tree = this.deviceTree;
       try {
         this.getSearchList(this.searchInfoArray, this.device_unit_tree);
-        // this.defaultExpanded("110kV碧桂站");
+        this.defaultExpanded("110kV碧桂站");
         this.defaultExpanded();
       } catch (error) {
         console.log("错误");
@@ -85,14 +85,11 @@ export default {
       if ("deviceType" in node) {
         console.log("设备", node);
       }
-      if (node.level >= 4) {
-        console.log("站点", node);
-      }
       if (
         (Array.isArray(node.children) && node.children.length === 0) ||
         node.children === null
       ) {
-        console.log("当前站点", node);
+        // console.log("当前站点", node);
         this.requestQueryTree(node);
       }
     },
@@ -101,7 +98,7 @@ export default {
       const RequestInfo = this.getRequestInfo(node);
       const BaseUrl = RequestInfo.BaseUrl;
       const unitId = RequestInfo.unitId;
-      console.log("设备初始化");
+      // console.log("设备初始化");
       this.$axios
         .get(
           BaseUrl + "/video/CmsTreeService/queryTreeData",
@@ -118,12 +115,11 @@ export default {
           }
         )
         .then(res => {
-          console.log("成功", this.queryTree);
+          // console.log("成功", this.queryTree);
           this.queryTree = res.data;
           this.appendTo(node); //给节点添加设备树
           this.getVideoList();
           this.$emit("add-video-list", this.videoList);
-          console.log("视屏", this.videoList);
         })
         .catch(err => {
           console.log("失败", err);

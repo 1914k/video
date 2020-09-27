@@ -1,5 +1,6 @@
 <template>
   <el-container>
+    <el-header height="50px"></el-header>
     <el-container class="content">
       <el-aside width="320px">
         <menu-aside
@@ -38,6 +39,7 @@ export default {
   methods: {
     addVideoList(list) {
       this.videoList = list;
+      console.log("视屏", this.videoList);
     },
     init() {
       this.fullscreenLoading();
@@ -55,7 +57,7 @@ export default {
           }
         )
         .then(res => {
-          console.log("成功", this.deviceTree);
+          // console.log("成功", this.deviceTree);
           this.deviceTree = res.data;
           this.timer = new Date().getTime();
           this.loading.close();

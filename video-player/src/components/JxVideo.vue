@@ -16,8 +16,8 @@
       <template v-slot:toolBar></template>
     </jxCmsPluginVideoMain>
     <div class="button-list">
-      <input type="button" @click="playList" value="播放列表" />
-      <input type="button" @click="playOne" value="播放1个" />
+      <!-- <input type="button" @click="playList" value="播放列表" />
+      <input type="button" @click="playOne" value="播放1个" />-->
     </div>
   </div>
 </template>
@@ -41,7 +41,12 @@ export default {
       videoCommand: null
     };
   },
-  created() {},
+  watch: {
+    videoList(val) {
+      console.log("变了", val);
+      this.playList();
+    }
+  },
   mounted() {},
   methods: {
     playOne() {
