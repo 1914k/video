@@ -19,6 +19,8 @@
 <script>
 import JxVideo from "../components/JxVideo";
 import MenuAside from "../components/MenuAside";
+import { cmsUrl } from "../config";
+
 export default {
   name: "video-main",
   data() {
@@ -33,7 +35,10 @@ export default {
     JxVideo,
     MenuAside
   },
-  created() {
+  // created() {
+  //   this.init();
+  // },
+  mounted() {
     this.init();
   },
   methods: {
@@ -43,10 +48,9 @@ export default {
     },
     init() {
       this.fullscreenLoading();
-      const BaseUrl = this.getBaseUrl();
       this.$axios
         .get(
-          BaseUrl + "/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
+          cmsUrl + "/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
           {
             params: {
               unitId: 1
@@ -67,9 +71,6 @@ export default {
           this.timer = new Date().getTime();
           this.loading.close();
         });
-    },
-    getBaseUrl() {
-      return jx_cms_global_config_.cmsUrl;
     },
     fullscreenLoading() {
       this.loading = this.$loading({

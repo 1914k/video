@@ -2,12 +2,13 @@
   <div style="min-height:400px;overflow:hidden">
     <jxCmsPluginVideoMain
       ref="videoMain"
-      userName="wangyl12345"
-      passWord="12345"
-      :defaultWindowNum="1"
-      :isFloatMode="false"
-      :isSimpleMode="false"
+      userName="userName"
+      passWord="passWord"
+      :defaultWindowNum="defaultWindowNum"
+      :isFloatMode="isFloatMode"
+      :isSimpleMode="isSimpleMode"
       :videoData="videoData"
+      @islogin="isLogin"
       style="height:600px"
     >
       <template v-slot:waiting></template>
@@ -24,6 +25,13 @@
 
 <script>
 import jxCmsPluginVideoMain from "@layen-king/jx-cms-video-main-plugin";
+import {
+  userName,
+  passWord,
+  defaultWindowNum,
+  isFloatMode,
+  isSimpleMode
+} from "../config";
 export default {
   name: "jxVideo",
   components: { jxCmsPluginVideoMain },
@@ -38,7 +46,12 @@ export default {
       maxWindowNum: 16,
       currentVideoIndex: 0,
       videoData: [],
-      videoCommand: null
+      videoCommand: null,
+      userName: userName,
+      passWord: passWord,
+      defaultWindowNum: defaultWindowNum,
+      isFloatMode: isFloatMode,
+      isSimpleMode: isSimpleMode
     };
   },
   watch: {
@@ -49,12 +62,11 @@ export default {
   },
   mounted() {},
   methods: {
-    playOne() {
-      console.log("播放", this.videoList[0]);
-      if (this.videoList.length > 0) this.videoData = this.videoList[0];
-    },
     playList() {
       if (this.videoList.length > 0) this.videoData = this.videoList;
+    },
+    isLogin(token) {
+      console.log("已登录", token);
     }
   }
 };

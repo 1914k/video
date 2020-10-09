@@ -36,6 +36,7 @@
 
 <script>
 import "@/assets/css/aside.css";
+import { cmsUrl } from "../config";
 export default {
   name: "menu-aside",
   props: {
@@ -127,7 +128,7 @@ export default {
     },
     getRequestInfo(node) {
       return {
-        BaseUrl: jx_cms_global_config_.cmsUrl,
+        BaseUrl: cmsUrl,
         unitId: node.id
       };
     },
