@@ -16,22 +16,12 @@
       <template v-slot:errorMessage></template>
       <template v-slot:toolBar></template>
     </jxCmsPluginVideoMain>
-    <div class="button-list">
-      <!-- <input type="button" @click="playList" value="播放列表" />
-      <input type="button" @click="playOne" value="播放1个" />-->
-    </div>
+    <div class="button-list"></div>
   </div>
 </template>
 
 <script>
 import jxCmsPluginVideoMain from "@layen-king/jx-cms-video-main-plugin";
-// import {
-//   userName,
-//   passWord,
-//   defaultWindowNum,
-//   isFloatMode,
-//   isSimpleMode
-// } from "../config";
 export default {
   name: "jxVideo",
   components: { jxCmsPluginVideoMain },

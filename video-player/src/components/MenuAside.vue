@@ -64,11 +64,6 @@ export default {
     searchInfo(val) {
       if (val === "") this.$refs.tree.filter("");
     }
-    // device_unit_tree(val) {
-    //   if (val != undefined) {
-    //     this.init();
-    //   }
-    // }
   },
   created() {
     this.init();
@@ -80,7 +75,6 @@ export default {
       try {
         this.getSearchList(this.searchInfoArray, this.device_unit_tree);
         this.defaultExpanded("110kV碧桂站");
-        this.defaultExpanded();
       } catch (error) {
         console.log(error);
       }
