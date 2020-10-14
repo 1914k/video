@@ -2,13 +2,13 @@
   <div style="min-height:400px;overflow:hidden">
     <jxCmsPluginVideoMain
       ref="videoMain"
-      userName="userName"
-      passWord="passWord"
+      :userName="userName"
+      :passWord="passWord"
       :defaultWindowNum="defaultWindowNum"
       :isFloatMode="isFloatMode"
       :isSimpleMode="isSimpleMode"
       :videoData="videoData"
-      @islogin="isLogin"
+      @islogin="islogin"
       style="height:600px"
     >
       <template v-slot:waiting></template>
@@ -25,13 +25,13 @@
 
 <script>
 import jxCmsPluginVideoMain from "@layen-king/jx-cms-video-main-plugin";
-import {
-  userName,
-  passWord,
-  defaultWindowNum,
-  isFloatMode,
-  isSimpleMode
-} from "../config";
+// import {
+//   userName,
+//   passWord,
+//   defaultWindowNum,
+//   isFloatMode,
+//   isSimpleMode
+// } from "../config";
 export default {
   name: "jxVideo",
   components: { jxCmsPluginVideoMain },
@@ -47,11 +47,11 @@ export default {
       currentVideoIndex: 0,
       videoData: [],
       videoCommand: null,
-      userName: userName,
-      passWord: passWord,
-      defaultWindowNum: defaultWindowNum,
-      isFloatMode: isFloatMode,
-      isSimpleMode: isSimpleMode
+      userName: undefined,
+      passWord: undefined,
+      defaultWindowNum: undefined,
+      isFloatMode: undefined,
+      isSimpleMode: undefined
     };
   },
   watch: {
@@ -60,13 +60,22 @@ export default {
       this.playList();
     }
   },
-  mounted() {},
+  created() {
+    this.getData();
+  },
   methods: {
     playList() {
       if (this.videoList.length > 0) this.videoData = this.videoList;
     },
-    isLogin(token) {
-      console.log("已登录", token);
+    getData() {
+      this.userName = process.env.VUE_APP_USERNAMENAME;
+      this.passWord = process.env.VUE_APP_PASSWORD;
+      this.defaultWindowNum = parseInt(process.env.VUE_APP_DEFAULITWINDOWNUM);
+      this.isFloatMode = process.env.VUE_APP_ISFLOATMODE === "true";
+      this.isSimpleMode = process.env.VUE_APP_ISSIMPLEMODE === "true";
+    },
+    islogin(token) {
+      this.$emit("hasToken", token);
     }
   }
 };

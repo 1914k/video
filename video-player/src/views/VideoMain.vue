@@ -10,7 +10,7 @@
         />
       </el-aside>
       <el-main>
-        <jx-video :video-list="videoList" />
+        <jx-video :video-list="videoList" @hasToken="hasToken" />
       </el-main>
     </el-container>
   </el-container>
@@ -19,7 +19,7 @@
 <script>
 import JxVideo from "../components/JxVideo";
 import MenuAside from "../components/MenuAside";
-import { cmsUrl } from "../config";
+// import { cmsUrl } from "../config";
 
 export default {
   name: "video-main",
@@ -28,40 +28,38 @@ export default {
       videoList: undefined,
       deviceTree: [],
       loading: undefined,
-      timer: ""
+      timer: "",
+      token: undefined
     };
   },
   components: {
     JxVideo,
     MenuAside
   },
-  // created() {
-  //   this.init();
-  // },
-  mounted() {
-    this.init();
+  created() {
+    this.fullscreenLoading();
   },
   methods: {
     addVideoList(list) {
       this.videoList = list;
       console.log("视屏", this.videoList);
     },
-    init() {
-      this.fullscreenLoading();
+    hasToken(token) {
+      this.token = token;
+      this.getDevice();
+    },
+    getDevice() {
+      console.log("拿到了", this.token);
       this.$axios
         .get(
-          cmsUrl + "/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
+          "http://10.142.252.10:8080/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
           {
             params: {
               unitId: 1
             }
-          },
-          {
-            Headers: { Authorization: "bearer " + localStorage.JX_ACCESS_TOKEN }
           }
         )
         .then(res => {
-          // console.log("成功", this.deviceTree);
           this.deviceTree = res.data;
           this.timer = new Date().getTime();
           this.loading.close();

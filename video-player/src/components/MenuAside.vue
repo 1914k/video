@@ -36,7 +36,7 @@
 
 <script>
 import "@/assets/css/aside.css";
-import { cmsUrl } from "../config";
+// import { cmsUrl } from "../config";
 export default {
   name: "menu-aside",
   props: {
@@ -63,7 +63,6 @@ export default {
   created() {
     this.init();
   },
-  mounted() {},
   watch: {
     searchInfo(val) {
       if (val === "") this.$refs.tree.filter("");
@@ -74,11 +73,13 @@ export default {
     init() {
       this.device_unit_tree = this.deviceTree;
       try {
-        this.getSearchList(this.searchInfoArray, this.device_unit_tree);
-        this.defaultExpanded("110kV碧桂站");
-        this.defaultExpanded();
+        if (this.device_unit_tree.lenght > 0) {
+          this.getSearchList(this.searchInfoArray, this.device_unit_tree);
+          this.defaultExpanded("110kV碧桂站");
+          this.defaultExpanded();
+        }
       } catch (error) {
-        console.log("错误");
+        console.log(error);
       }
     },
     // 站点点击事件
@@ -102,7 +103,8 @@ export default {
       // console.log("设备初始化");
       this.$axios
         .get(
-          BaseUrl + "/video/CmsTreeService/queryTreeData",
+          BaseUrl +
+            "http://10.142.252.10:8080/video/CmsTreeService/queryTreeData",
           {
             params: {
               unitId: unitId,
@@ -110,9 +112,6 @@ export default {
               type: "SUB",
               filterType: "IPC"
             }
-          },
-          {
-            Headers: { Authorization: "bearer " + localStorage.JX_ACCESS_TOKEN }
           }
         )
         .then(res => {
@@ -123,12 +122,12 @@ export default {
           this.$emit("add-video-list", this.videoList);
         })
         .catch(err => {
-          console.log("失败", err);
+          console.log(err);
         });
     },
     getRequestInfo(node) {
       return {
-        BaseUrl: cmsUrl,
+        BaseUrl: process.env.VUE_APP_BASEURL,
         unitId: node.id
       };
     },
