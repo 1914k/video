@@ -42,17 +42,16 @@ export default {
   methods: {
     addVideoList(list) {
       this.videoList = list;
-      console.log("视屏", this.videoList);
     },
     hasToken(token) {
       this.token = token;
       this.getDevice();
     },
     getDevice() {
-      console.log("拿到了", this.token);
       this.$axios
         .get(
-          "http://10.142.252.10:8080/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
+          process.env.VUE_APP_BASEURL +
+            "/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
           {
             params: {
               unitId: 1

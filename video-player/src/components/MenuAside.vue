@@ -60,38 +60,37 @@ export default {
       device_unit_tree: []
     };
   },
-  created() {
-    this.init();
-  },
   watch: {
     searchInfo(val) {
       if (val === "") this.$refs.tree.filter("");
     }
+    // device_unit_tree(val) {
+    //   if (val != undefined) {
+    //     this.init();
+    //   }
+    // }
+  },
+  created() {
+    this.init();
   },
   methods: {
     // 初始化
     init() {
       this.device_unit_tree = this.deviceTree;
       try {
-        if (this.device_unit_tree.lenght > 0) {
-          this.getSearchList(this.searchInfoArray, this.device_unit_tree);
-          this.defaultExpanded("110kV碧桂站");
-          this.defaultExpanded();
-        }
+        this.getSearchList(this.searchInfoArray, this.device_unit_tree);
+        this.defaultExpanded("110kV碧桂站");
+        this.defaultExpanded();
       } catch (error) {
         console.log(error);
       }
     },
     // 站点点击事件
     handleClick(node) {
-      if ("deviceType" in node) {
-        console.log("设备", node);
-      }
       if (
         (Array.isArray(node.children) && node.children.length === 0) ||
         node.children === null
       ) {
-        // console.log("当前站点", node);
         this.requestQueryTree(node);
       }
     },
@@ -100,22 +99,16 @@ export default {
       const RequestInfo = this.getRequestInfo(node);
       const BaseUrl = RequestInfo.BaseUrl;
       const unitId = RequestInfo.unitId;
-      // console.log("设备初始化");
       this.$axios
-        .get(
-          BaseUrl +
-            "http://10.142.252.10:8080/video/CmsTreeService/queryTreeData",
-          {
-            params: {
-              unitId: unitId,
-              view: "resource",
-              type: "SUB",
-              filterType: "IPC"
-            }
+        .get(BaseUrl + "/video/CmsTreeService/queryTreeData", {
+          params: {
+            unitId: unitId,
+            view: "resource",
+            type: "SUB",
+            filterType: "IPC"
           }
-        )
+        })
         .then(res => {
-          // console.log("成功", this.queryTree);
           this.queryTree = res.data;
           this.appendTo(node); //给节点添加设备树
           this.getVideoList();
@@ -222,7 +215,6 @@ export default {
       } else if (node.level === 4) {
         // 展开搜索站点的设备树
         if (ifOne) {
-          // console.log(data);
           this.handleClick(data);
         }
         resultFore = ifOne || ifTwo || ifThree || ifFour;

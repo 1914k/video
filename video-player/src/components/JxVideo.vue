@@ -55,8 +55,7 @@ export default {
     };
   },
   watch: {
-    videoList(val) {
-      console.log("变了", val);
+    videoList() {
       this.playList();
     }
   },
