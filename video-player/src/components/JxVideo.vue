@@ -29,6 +29,10 @@ export default {
     videoList: {
       type: Array,
       default: () => []
+    },
+    videoNo: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -36,6 +40,7 @@ export default {
       maxWindowNum: 16,
       currentVideoIndex: 0,
       videoData: [],
+      videoNoList: [],
       videoCommand: null,
       userName: undefined,
       passWord: undefined,
@@ -46,7 +51,11 @@ export default {
   },
   watch: {
     videoList() {
-      this.playList();
+      this.playOne();
+    },
+    videoNo(val) {
+      this.playOne(val);
+      // this.playList();
     }
   },
   created() {
@@ -56,12 +65,34 @@ export default {
     playList() {
       if (this.videoList.length > 0) this.videoData = this.videoList;
     },
+    playOne(videoNo) {
+      if (
+        this.videoList.length > 0 &&
+        this.videoNoList.indexOf(videoNo) == -1
+      ) {
+        let no = 0,
+          idx = 0;
+        if (videoNo) {
+          for (let i of this.videoList) {
+            if (videoNo == i.videoNo) {
+              this.videoNoList.push(videoNo);
+              break;
+            }
+            idx++;
+          }
+          no = idx;
+        } else {
+          this.videoNoList.push(this.videoList[0].videoNo);
+        }
+        this.videoData = this.videoList[no];
+      }
+    },
     getData() {
-      this.userName = process.env.VUE_APP_USERNAMENAME;
-      this.passWord = process.env.VUE_APP_PASSWORD;
-      this.defaultWindowNum = parseInt(process.env.VUE_APP_DEFAULITWINDOWNUM);
-      this.isFloatMode = process.env.VUE_APP_ISFLOATMODE === "true";
-      this.isSimpleMode = process.env.VUE_APP_ISSIMPLEMODE === "true";
+      this.userName = jx_cms_global_config_.userName;
+      this.passWord = jx_cms_global_config_.passWord;
+      this.defaultWindowNum = jx_cms_global_config_.defaultWindowNum;
+      this.isFloatMode = jx_cms_global_config_.isFloatMode;
+      this.isSimpleMode = jx_cms_global_config_.isSimpleMode;
     },
     islogin(token) {
       this.$emit("hasToken", token);

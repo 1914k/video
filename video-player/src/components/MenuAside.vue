@@ -36,7 +36,6 @@
 
 <script>
 import "@/assets/css/aside.css";
-// import { cmsUrl } from "../config";
 export default {
   name: "menu-aside",
   props: {
@@ -74,9 +73,10 @@ export default {
       this.device_unit_tree = this.deviceTree;
       try {
         this.getSearchList(this.searchInfoArray, this.device_unit_tree);
-        this.defaultExpanded("110kV碧桂站");
+        // this.defaultExpanded("110kV碧桂站"); //默认打开的站点
+        // this.defaultExpanded(); //默认打开第一个站点
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     },
     // 站点点击事件
@@ -86,6 +86,10 @@ export default {
         node.children === null
       ) {
         this.requestQueryTree(node);
+      }
+      if ("deviceType" in node) {
+        // 获取视屏NO
+        this.$emit("get-video-no", node.no);
       }
     },
     // 提交请求获取站点设备
@@ -97,7 +101,7 @@ export default {
         .get(BaseUrl + "/video/CmsTreeService/queryTreeData", {
           params: {
             unitId: unitId,
-            view: "resource",
+            view: "device",
             type: "SUB",
             filterType: "IPC"
           }
@@ -114,7 +118,7 @@ export default {
     },
     getRequestInfo(node) {
       return {
-        BaseUrl: process.env.VUE_APP_BASEURL,
+        BaseUrl: jx_cms_global_config_.cmsUrl,
         unitId: node.id
       };
     },
@@ -234,9 +238,12 @@ export default {
           this.handleSearch(text);
         }, 500);
       } else {
-        const defaultNode = this.device_unit_tree[0].children[0].children[0]
-          .children[0];
-        this.handleClick(defaultNode);
+        // let defaultNode =
+        //   this.device_unit_tree[0].children[0].children[0].children[0] ||
+        //   this.device_unit_tree[0].children[0].children[0] ||
+        //   this.device_unit_tree[0].children[0] ||
+        //   this.device_unit_tree[0];
+        // this.handleClick(defaultNode);
       }
     }
   }

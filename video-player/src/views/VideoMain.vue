@@ -1,16 +1,21 @@
 <template>
   <el-container>
-    <el-header height="50px"></el-header>
     <el-container class="content">
       <el-aside width="320px">
         <menu-aside
+          v-if="deviceTree.length > 0"
           :key="timer"
           :device-tree="deviceTree"
           @add-video-list="addVideoList"
+          @get-video-no="getVideoNo"
         />
       </el-aside>
       <el-main>
-        <jx-video :video-list="videoList" @hasToken="hasToken" />
+        <jx-video
+          :video-list="videoList"
+          :video-no="videoNo"
+          @hasToken="hasToken"
+        />
       </el-main>
     </el-container>
   </el-container>
@@ -26,6 +31,7 @@ export default {
   data() {
     return {
       videoList: undefined,
+      videoNo: undefined,
       deviceTree: [],
       loading: undefined,
       timer: "",
@@ -43,6 +49,9 @@ export default {
     addVideoList(list) {
       this.videoList = list;
     },
+    getVideoNo(no) {
+      this.videoNo = no;
+    },
     hasToken(token) {
       this.token = token;
       this.getDevice();
@@ -50,7 +59,7 @@ export default {
     getDevice() {
       this.$axios
         .get(
-          process.env.VUE_APP_BASEURL +
+          jx_cms_global_config_.cmsUrl +
             "/video/CmsDeviceUnitTreeService/getDeviceUnitTree",
           {
             params: {
@@ -62,11 +71,15 @@ export default {
           this.deviceTree = res.data;
           this.timer = new Date().getTime();
           this.loading.close();
+          // 清除外层HTML的loading动画
+          // parent.clearLoading();
         })
         .catch(err => {
           console.log("失败", err);
           this.timer = new Date().getTime();
           this.loading.close();
+          // 清除外层HTML的loading动画
+          // parent.clearLoading();
         });
     },
     fullscreenLoading() {
@@ -81,12 +94,7 @@ export default {
 };
 </script>
 <style scoped>
-.el-header {
-  text-align: center;
-  vertical-align: middle;
-  line-height: 40px;
-}
 .el-aside {
-  padding: 20px 0 20px 20px;
+  padding: 20px 0 0 20px;
 }
 </style>
