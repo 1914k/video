@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <video-main />
+    <video-main style="height: 100%" />
   </div>
 </template>
 

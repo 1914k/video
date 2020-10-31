@@ -1,5 +1,5 @@
 <template>
-  <div style="min-height:400px;overflow:hidden">
+  <div style="min-height:400px;overflow:hidden; height: 100%">
     <jxCmsPluginVideoMain
       ref="videoMain"
       :userName="userName"
@@ -9,7 +9,7 @@
       :isSimpleMode="isSimpleMode"
       :videoData="videoData"
       @islogin="islogin"
-      style="height:600px"
+      style="height: calc(100% - 2px);"
     >
       <template v-slot:waiting></template>
       <template v-slot:PTZ3D></template>
@@ -103,7 +103,7 @@ export default {
 
 <style scoped>
 .button-list {
-  padding-top: 20px;
+  padding-top: 2px;
 }
 .button-list input {
   color: #fff;

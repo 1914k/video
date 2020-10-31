@@ -43,7 +43,7 @@ export default {
     MenuAside
   },
   created() {
-    this.fullscreenLoading();
+    // this.fullscreenLoading();
   },
   methods: {
     addVideoList(list) {
@@ -69,17 +69,18 @@ export default {
         )
         .then(res => {
           this.deviceTree = res.data;
-          this.timer = new Date().getTime();
+          // this.timer = new Date().getTime();
           this.loading.close();
           // 清除外层HTML的loading动画
-          // parent.clearLoading();
         })
         .catch(err => {
           console.log("失败", err);
           this.timer = new Date().getTime();
-          this.loading.close();
+          // this.loading.close();
           // 清除外层HTML的loading动画
-          // parent.clearLoading();
+          if (parent && parent.clearLoading) {
+            parent.clearLoading();
+          }
         });
     },
     fullscreenLoading() {
@@ -95,6 +96,9 @@ export default {
 </script>
 <style scoped>
 .el-aside {
-  padding: 20px 0 0 20px;
+  padding: 20px 0 20px 20px;
+}
+.el-main {
+  padding-bottom: 20px;
 }
 </style>

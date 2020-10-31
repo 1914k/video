@@ -13,7 +13,7 @@
         :trigger-on-focus="false"
       ></el-autocomplete>
     </el-header>
-    <el-main>
+    <el-main style="position: relative; height: 100%;">
       <div class="device-tree">
         <el-scrollbar style="height:100%">
           <el-tree
@@ -22,10 +22,12 @@
             :filter-node-method="filterNode"
             :data="device_unit_tree"
             node-key="id"
+            accordion
             highlight-current
             :default-expanded-keys="expandedKey"
             :props="defaultProps"
             @node-click="handleClick"
+            :render-content="renderContent"
           >
           </el-tree>
         </el-scrollbar>
@@ -50,7 +52,20 @@ export default {
       searchInfo: "",
       defaultProps: {
         children: "children",
-        label: "text"
+        // label: "text"
+        label: function(data, node) {
+          try {
+            let show = data.attributes ? " (" + data.attributes.show + ")" : "";
+            if ((data.attributes && data.attributes.show) || data.deviceType) {
+              data = data.text + show;
+            } else {
+              data = data.text;
+            }
+            return data;
+          } catch (error) {
+            console.log(error);
+          }
+        }
       },
       videoList: [],
       searchInfoArray: [],
@@ -61,23 +76,57 @@ export default {
   },
   watch: {
     searchInfo(val) {
-      if (val === "") this.$refs.tree.filter("");
+      this.$refs.tree.filter(val);
     }
   },
   created() {
     this.init();
   },
+  mounted() {
+    try {
+      if (parent && parent.clearLoading) {
+        parent.clearLoading();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  },
   methods: {
     // 初始化
     init() {
+      const openNode = this.getUrlArg().name;
       this.device_unit_tree = this.deviceTree;
       try {
         this.getSearchList(this.searchInfoArray, this.device_unit_tree);
-        // this.defaultExpanded("110kV碧桂站"); //默认打开的站点
-        // this.defaultExpanded(); //默认打开第一个站点
+        if (openNode) {
+          const name = RegExp(openNode + "站");
+          for (let item of this.searchInfoArray) {
+            if (name.test(item.value)) {
+              this.defaultExpanded(item.value); //默认打开的站点
+              this.searchInfo = item.value;
+              break;
+            } else {
+              this.searchInfo = openNode;
+            }
+          }
+        }
       } catch (error) {
         // console.log(error);
       }
+    },
+    // 获取页面URL传过来的站名
+    getUrlArg() {
+      const url = location.search; // 获取url中"?"符后的字串
+
+      const theRequest = new Object();
+      if (url.indexOf("?") != -1) {
+        const str = url.substr(1);
+        const strs = str.split("&");
+        for (let i = 0; i < strs.length; i++) {
+          theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+        }
+      }
+      return theRequest;
     },
     // 站点点击事件
     handleClick(node) {
@@ -94,9 +143,8 @@ export default {
     },
     // 提交请求获取站点设备
     requestQueryTree(node) {
-      const RequestInfo = this.getRequestInfo(node);
-      const BaseUrl = RequestInfo.BaseUrl;
-      const unitId = RequestInfo.unitId;
+      const BaseUrl = jx_cms_global_config_.cmsUrl;
+      const unitId = node.id;
       this.$axios
         .get(BaseUrl + "/video/CmsTreeService/queryTreeData", {
           params: {
@@ -115,12 +163,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    },
-    getRequestInfo(node) {
-      return {
-        BaseUrl: jx_cms_global_config_.cmsUrl,
-        unitId: node.id
-      };
     },
     // 添加站点的设备节点
     appendTo(data) {
@@ -179,47 +221,48 @@ export default {
       if (!value) return true;
       // 搜索的当前站点含有搜索信息
       let ifOne = data.text.indexOf(value) !== -1;
+      return ifOne;
       // 搜索的父站点含有搜索信息
-      let ifTwo =
-        node.parent &&
-        node.parent.data &&
-        node.parent.data.text &&
-        node.parent.data.text.indexOf(value) !== -1;
-      let ifThree =
-        node.parent &&
-        node.parent.parent &&
-        node.parent.parent.data &&
-        node.parent.parent.data.text &&
-        node.parent.parent.data.text.indexOf(value) !== -1;
-      let ifFour =
-        node.parent &&
-        node.parent.parent &&
-        node.parent.parent.parent &&
-        node.parent.parent.parent.data &&
-        node.parent.parent.parent.data.text &&
-        node.parent.parent.parent.data.text.indexOf(value) !== -1;
-      let resultOne = false;
-      let resultTwo = false;
-      let resultThree = false;
-      let resultFore = false;
-      let resultFive = false;
+      // let ifTwo =
+      //   node.parent &&
+      //   node.parent.data &&
+      //   node.parent.data.text &&
+      //   node.parent.data.text.indexOf(value) !== -1;
+      // let ifThree =
+      //   node.parent &&
+      //   node.parent.parent &&
+      //   node.parent.parent.data &&
+      //   node.parent.parent.data.text &&
+      //   node.parent.parent.data.text.indexOf(value) !== -1;
+      // let ifFour =
+      //   node.parent &&
+      //   node.parent.parent &&
+      //   node.parent.parent.parent &&
+      //   node.parent.parent.parent.data &&
+      //   node.parent.parent.parent.data.text &&
+      //   node.parent.parent.parent.data.text.indexOf(value) !== -1;
+      // let resultOne = false;
+      // let resultTwo = false;
+      // let resultThree = false;
+      // let resultFore = false;
+      // let resultFive = false;
 
-      if (node.level === 1) {
-        resultOne = ifOne;
-      } else if (node.level === 2) {
-        resultTwo = ifOne || ifTwo;
-      } else if (node.level === 3) {
-        resultThree = ifOne || ifTwo || ifThree;
-      } else if (node.level === 4) {
-        // 展开搜索站点的设备树
-        if (ifOne) {
-          this.handleClick(data);
-        }
-        resultFore = ifOne || ifTwo || ifThree || ifFour;
-      } else if (node.level === 5) {
-        resultFive = ifOne || ifTwo || ifThree || ifFour;
-      }
-      return resultOne || resultTwo || resultThree || resultFore || resultFive;
+      // if (node.level === 1) {
+      //   resultOne = ifOne;
+      // } else if (node.level === 2) {
+      //   resultTwo = ifOne || ifTwo;
+      // } else if (node.level === 3) {
+      //   resultThree = ifOne || ifTwo || ifThree;
+      // } else if (node.level === 4) {
+      //   // 展开搜索站点的设备树
+      //   if (ifOne) {
+      //     this.handleClick(data);
+      //   }
+      //   resultFore = ifOne || ifTwo || ifThree || ifFour;
+      // } else if (node.level === 5) {
+      //   resultFive = ifOne || ifTwo || ifThree || ifFour;
+      // }
+      // return resultOne || resultTwo || resultThree || resultFore || resultFive;
     },
     // 得到站点的视屏 no 和 name
     getVideoList() {
@@ -244,6 +287,23 @@ export default {
         //   this.device_unit_tree[0].children[0] ||
         //   this.device_unit_tree[0];
         // this.handleClick(defaultNode);
+      }
+    },
+    // 自定义节点内容
+    renderContent(h, { node, data, store }) {
+      if (node.data.deviceType) {
+        const iconStatus =
+          node.data.status == 0 ? "el-icon-star-off" : "el-icon-star-on";
+        return (
+          <span class="custom-tree-node">
+            <span class="el-tree-node__label">{node.label}</span>
+            <span style="margin-left: 5px;">
+              <i class={iconStatus}></i>
+            </span>
+          </span>
+        );
+      } else {
+        return <span class="el-tree-node__label">{node.label}</span>;
       }
     }
   }
