@@ -53,7 +53,7 @@ export default {
       defaultProps: {
         children: "children",
         // label: "text"
-        label: function(data, node) {
+        label: function(data) {
           try {
             let show = data.attributes ? " (" + data.attributes.show + ")" : "";
             if ((data.attributes && data.attributes.show) || data.deviceType) {
@@ -71,7 +71,8 @@ export default {
       searchInfoArray: [],
       searchMap: undefined,
       queryTree: [],
-      device_unit_tree: []
+      device_unit_tree: [],
+      defaultNode: {}
     };
   },
   watch: {
@@ -96,6 +97,7 @@ export default {
     init() {
       const openNode = this.getUrlArg().name;
       this.device_unit_tree = this.deviceTree;
+      console.log(this.deviceTree, "设备");
       try {
         this.getSearchList(this.searchInfoArray, this.device_unit_tree);
         //如果有传过来的站点默认打开
@@ -103,7 +105,6 @@ export default {
           const name = RegExp(openNode + "站");
           for (let item of this.searchInfoArray) {
             if (name.test(item.value)) {
-              this.defaultExpanded(item.value); //默认打开的站点
               this.searchInfo = item.value;
               break;
             } else {
@@ -112,14 +113,18 @@ export default {
           }
         } else {
           //如果没有默认打开第一个站点
-          let node = this.getFirstZhan(this.device_unit_tree[0].children);
-          this.requestQueryTree(node);
-          // this.defaultExpanded("110kV碧桂站(大华)"); //默认打开的站点
+          this.defaultNode = this.getFirstZhan(
+            this.device_unit_tree[0].children
+          );
+
           // this.searchInfo = "110kV碧桂站(大华)";
         }
       } catch (error) {
         // console.log(error);
       }
+    },
+    openDefaultNode() {
+      this.handleClick(this.defaultNode);
     },
     // 获取页面URL传过来的站名
     getUrlArg() {
@@ -137,7 +142,10 @@ export default {
     },
     // 站点点击事件
     handleClick(node) {
-      if (node.attributes.isUnitTreeLeafNode) {
+      if (
+        node.attributes.isUnitTreeLeafNode &&
+        (node.children == null || node.children.length == 0)
+      ) {
         this.requestQueryTree(node);
       }
       if ("deviceType" in node) {
@@ -224,49 +232,12 @@ export default {
     filterNode(value, data, node) {
       if (!value) return true;
       // 搜索的当前站点含有搜索信息
-      let ifOne = data.text.indexOf(value) !== -1;
-      return ifOne;
-      // 搜索的父站点含有搜索信息
-      // let ifTwo =
-      //   node.parent &&
-      //   node.parent.data &&
-      //   node.parent.data.text &&
-      //   node.parent.data.text.indexOf(value) !== -1;
-      // let ifThree =
-      //   node.parent &&
-      //   node.parent.parent &&
-      //   node.parent.parent.data &&
-      //   node.parent.parent.data.text &&
-      //   node.parent.parent.data.text.indexOf(value) !== -1;
-      // let ifFour =
-      //   node.parent &&
-      //   node.parent.parent &&
-      //   node.parent.parent.parent &&
-      //   node.parent.parent.parent.data &&
-      //   node.parent.parent.parent.data.text &&
-      //   node.parent.parent.parent.data.text.indexOf(value) !== -1;
-      // let resultOne = false;
-      // let resultTwo = false;
-      // let resultThree = false;
-      // let resultFore = false;
-      // let resultFive = false;
-
-      // if (node.level === 1) {
-      //   resultOne = ifOne;
-      // } else if (node.level === 2) {
-      //   resultTwo = ifOne || ifTwo;
-      // } else if (node.level === 3) {
-      //   resultThree = ifOne || ifTwo || ifThree;
-      // } else if (node.level === 4) {
-      //   // 展开搜索站点的设备树
-      //   if (ifOne) {
-      //     this.handleClick(data);
-      //   }
-      //   resultFore = ifOne || ifTwo || ifThree || ifFour;
-      // } else if (node.level === 5) {
-      //   resultFive = ifOne || ifTwo || ifThree || ifFour;
-      // }
-      // return resultOne || resultTwo || resultThree || resultFore || resultFive;
+      let ifHas = data.text.indexOf(value) !== -1;
+      if (ifHas) {
+        console.log(node);
+        // debugger;
+      }
+      return ifHas;
     },
     // 得到站点的视屏 no 和 name
     getVideoList() {
@@ -281,7 +252,8 @@ export default {
     // 获取组织下的第一个站点
     getFirstZhan(arr) {
       for (let i of arr) {
-        if (i.attributes.isUnitTreeLeafNode) {
+        // if (i.attributes.isUnitTreeLeafNode) {
+        if (i.text == "110kV碧桂站(大华)") {
           return i;
         } else {
           if (i.children && i.children.length > 0) {
@@ -290,16 +262,8 @@ export default {
         }
       }
     },
-    // 设置默认打开的站点
-    defaultExpanded(text) {
-      if (text) {
-        setTimeout(() => {
-          this.handleSearch(text);
-        }, 500);
-      }
-    },
     // 自定义节点内容
-    renderContent(h, { node, data, store }) {
+    renderContent(h, { node }) {
       if (node.data.deviceType) {
         const iconStatus =
           node.data.status == 0 ? "el-icon-star-off" : "el-icon-star-on";
