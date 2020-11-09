@@ -98,6 +98,7 @@ export default {
       this.device_unit_tree = this.deviceTree;
       try {
         this.getSearchList(this.searchInfoArray, this.device_unit_tree);
+        //如果有传过来的站点默认打开
         if (openNode) {
           const name = RegExp(openNode + "站");
           for (let item of this.searchInfoArray) {
@@ -109,6 +110,12 @@ export default {
               this.searchInfo = openNode;
             }
           }
+        } else {
+          //如果没有默认打开第一个站点
+          let node = this.getFirstZhan(this.device_unit_tree[0].children);
+          this.requestQueryTree(node);
+          // this.defaultExpanded("110kV碧桂站(大华)"); //默认打开的站点
+          // this.searchInfo = "110kV碧桂站(大华)";
         }
       } catch (error) {
         // console.log(error);
@@ -130,10 +137,7 @@ export default {
     },
     // 站点点击事件
     handleClick(node) {
-      if (
-        (Array.isArray(node.children) && node.children.length === 0) ||
-        node.children === null
-      ) {
+      if (node.attributes.isUnitTreeLeafNode) {
         this.requestQueryTree(node);
       }
       if ("deviceType" in node) {
@@ -274,19 +278,24 @@ export default {
         this.videoList.push(obj);
       }
     },
+    // 获取组织下的第一个站点
+    getFirstZhan(arr) {
+      for (let i of arr) {
+        if (i.attributes.isUnitTreeLeafNode) {
+          return i;
+        } else {
+          if (i.children && i.children.length > 0) {
+            return this.getFirstZhan(i.children);
+          }
+        }
+      }
+    },
     // 设置默认打开的站点
     defaultExpanded(text) {
       if (text) {
         setTimeout(() => {
           this.handleSearch(text);
         }, 500);
-      } else {
-        // let defaultNode =
-        //   this.device_unit_tree[0].children[0].children[0].children[0] ||
-        //   this.device_unit_tree[0].children[0].children[0] ||
-        //   this.device_unit_tree[0].children[0] ||
-        //   this.device_unit_tree[0];
-        // this.handleClick(defaultNode);
       }
     },
     // 自定义节点内容

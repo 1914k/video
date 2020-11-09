@@ -43,7 +43,11 @@ export default {
     MenuAside
   },
   created() {
-    // this.fullscreenLoading();
+    if (parent && parent.clearLoading) {
+      return;
+    } else {
+      this.fullscreenLoading();
+    }
   },
   methods: {
     addVideoList(list) {
@@ -70,16 +74,20 @@ export default {
         .then(res => {
           this.deviceTree = res.data;
           // this.timer = new Date().getTime();
-          this.loading.close();
-          // 清除外层HTML的loading动画
+          if (parent && parent.clearLoading) {
+            return;
+          } else {
+            this.loading.close();
+          }
         })
         .catch(err => {
           console.log("失败", err);
           this.timer = new Date().getTime();
-          // this.loading.close();
           // 清除外层HTML的loading动画
           if (parent && parent.clearLoading) {
             parent.clearLoading();
+          } else {
+            this.loading.close();
           }
         });
     },
