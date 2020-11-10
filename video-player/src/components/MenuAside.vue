@@ -72,7 +72,8 @@ export default {
       searchMap: undefined,
       queryTree: [],
       device_unit_tree: [],
-      defaultNode: {}
+      defaultNode: {},
+      curDataNote: {}
     };
   },
   watch: {
@@ -97,7 +98,7 @@ export default {
     init() {
       const openNode = this.getUrlArg().name;
       this.device_unit_tree = this.deviceTree;
-      console.log(this.deviceTree, "设备");
+
       try {
         this.getSearchList(this.searchInfoArray, this.device_unit_tree);
         //如果有传过来的站点默认打开
@@ -112,19 +113,14 @@ export default {
             }
           }
         } else {
-          //如果没有默认打开第一个站点
+          //如果没有有传过来的站点默认打开第一个站点
           this.defaultNode = this.getFirstZhan(
             this.device_unit_tree[0].children
           );
-
-          // this.searchInfo = "110kV碧桂站(大华)";
         }
       } catch (error) {
         // console.log(error);
       }
-    },
-    openDefaultNode() {
-      this.handleClick(this.defaultNode);
     },
     // 获取页面URL传过来的站名
     getUrlArg() {
@@ -183,10 +179,11 @@ export default {
         this.$set(data, "children", []);
       }
       // 把设备树添加到站点中
-      data.children.push(...newChild);
+      this.$set(data, "children", newChild);
+      // data.children.push(...newChild);
       // 默认展开该站点
-      this.expandedKey = [];
-      this.expandedKey.push(data.id);
+      this.expandedKey = [data.id];
+      this.$forceUpdate();
     },
     // 选中搜索弹出框
     handleSelect(item) {
@@ -197,6 +194,7 @@ export default {
       if (typeof value === "string") {
         // 点击搜索弹框时的搜索信息
         this.$refs.tree.filter(value);
+        this.handleClick(this.curDataNote);
       } else {
         // 点击回车时的搜索信息
         this.$refs.tree.filter(this.searchInfo);
@@ -229,13 +227,12 @@ export default {
       }
     },
     // 搜索过滤
-    filterNode(value, data, node) {
+    filterNode(value, data) {
       if (!value) return true;
       // 搜索的当前站点含有搜索信息
       let ifHas = data.text.indexOf(value) !== -1;
       if (ifHas) {
-        console.log(node);
-        // debugger;
+        this.curDataNote = this.getFirstZhan(this.device_unit_tree[0].children);
       }
       return ifHas;
     },
